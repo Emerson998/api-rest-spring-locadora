@@ -14,7 +14,6 @@ public class FornecedorDto {
 	}
 
 	public FornecedorDto(Long id, String endereco, String lote, String quantidadeDeDvds, String cnpj) {
-		super();
 		this.id = id;
 		this.endereco = endereco;
 		this.lote = lote;

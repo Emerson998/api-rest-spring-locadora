@@ -17,7 +17,6 @@ public class ClienteDto {
 	}
 
 	public ClienteDto(Long id, String nome, String cpf, LocadoraEntity locadora) {
-		super();
 		this.id = id;
 		this.nome = nome;
 		this.cpf = cpf;
