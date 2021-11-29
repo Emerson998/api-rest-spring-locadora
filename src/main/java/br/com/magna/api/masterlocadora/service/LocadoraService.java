@@ -20,12 +20,6 @@ public class LocadoraService {
 	@Autowired
 	private ModelMapper modelMapper;
 
-	/*******************************************************************************
-	 * Pesquisa Todos os Clientes
-	 *
-	 * @return
-	 * @throws Exception
-	 ********************************************************************************/
 	public Page<LocadoraDto> buscaEspecifica(Pageable pageable) {
 		Page<LocadoraEntity> locadora = locadoraRepository.findAll(pageable);
 		return locadora.map(item -> modelMapper.map(item, LocadoraDto.class));
@@ -41,12 +35,6 @@ public class LocadoraService {
 		return locadoraDto;
 	}
 
-	/*******************************************************************************
-	 * Salvando Cliente
-	 *
-	 * @return
-	 * @throws Exception
-	 ********************************************************************************/
 	public LocadoraDto salvarLocadoraDto(LocadoraDto locadoraDto) {
 		try {
 			LocadoraEntity locadora = locadoraRepository.save(converParaEntity(locadoraDto));
@@ -57,13 +45,6 @@ public class LocadoraService {
 		}
 		return locadoraDto;
 	}
-
-	/*******************************************************************************
-	 * Atualizando Dados do Cliente
-	 *
-	 * @return
-	 * @throws Exception
-	 ********************************************************************************/
 
 	public LocadoraDto alterarClienteDto(LocadoraDto locadoraDto) {
 		try {
@@ -85,12 +66,6 @@ public class LocadoraService {
 		LocadoraEntity locadoraAtualizado = locadoraRepository.save(convertEntity);
 		return converterParaDto(locadoraAtualizado);
 	}
-
-	/*******************************************************************************
-	 * Conversores
-	 *
-	 * @return
-	 ********************************************************************************/
 
 	private LocadoraDto converterParaDto(LocadoraEntity locadora) {
 		return modelMapper.map(locadora, LocadoraDto.class);
