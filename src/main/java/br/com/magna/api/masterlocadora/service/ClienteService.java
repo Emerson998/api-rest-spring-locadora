@@ -87,12 +87,12 @@ public class ClienteService {
 		}
 	}
 
-	private ClienteDto converterParaDto(ClienteEntity cliente) {
-		return modelMapper.map(cliente, ClienteDto.class);
-	}
-
 	private ClienteEntity converterParaEntity(ClienteDto clienteDto) {
 		return modelMapper.map(clienteDto, ClienteEntity.class);
+	}
+	
+	private ClienteDto converterParaDto(ClienteEntity cliente) {
+		return modelMapper.map(cliente, ClienteDto.class);
 	}
 
 }
