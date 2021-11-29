@@ -40,7 +40,7 @@ public class LocadoraEntity implements Serializable {
 	}
 
 	public LocadoraEntity(Long id, String endereco, String dvdNome, String cnpj) {
-		super();
+		
 		this.id = id;
 		this.endereco = endereco;
 		this.dvdNome = dvdNome;
