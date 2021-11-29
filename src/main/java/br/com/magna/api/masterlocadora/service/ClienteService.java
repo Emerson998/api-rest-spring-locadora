@@ -22,11 +22,13 @@ public class ClienteService {
 	@Autowired
 	private ModelMapper modelMapper;
 
+	// Paginacao
 	public Page<ClienteDto> buscaEspecifica(Pageable pageable) {
 		Page<ClienteEntity> cliente = clienteRepository.findAll(pageable);
 		return cliente.map(item -> modelMapper.map(item, ClienteDto.class));
 	}
 
+	// Buscando Clientes
 	public ClienteDto getLogin(String cpf) throws NotFoundException {
 		ClienteEntity cliente = clienteRepository.findByCpf(cpf);
 		ClienteDto usuarioDto = converterParaDto(cliente);
@@ -37,6 +39,7 @@ public class ClienteService {
 		return usuarioDto;
 	}
 
+	// Salvando Clientes
 	public ClienteDto SalvandoClienteDto(ClienteDto clienteDtoSave) throws Exception {
 		try {
 			if (ValidandoCpf(clienteDtoSave.getCpf())) {
@@ -54,6 +57,7 @@ public class ClienteService {
 		return null;
 	}
 
+	// Atualizando Clientes
 	public ClienteDto alterarClienteDto(ClienteDto clienteDto) {
 		try {
 			ClienteEntity cliente = clienteRepository.save(converterParaEntity(clienteDto));
@@ -65,6 +69,7 @@ public class ClienteService {
 		return clienteDto;
 	}
 
+	// Atualizando Clientes
 	public ClienteDto update(String cpf, ClienteDto clienteDto) throws NotFoundException {
 
 		ClienteEntity cliente = clienteRepository.findByCpf(cpf);
@@ -76,6 +81,7 @@ public class ClienteService {
 		return converterParaDto(clienteAtualizado);
 	}
 
+	// Apenas Cpfs Validos
 	public static boolean ValidandoCpf(String cpf) {
 		CPFValidator cpfValidator = new CPFValidator();
 		try {
@@ -87,10 +93,11 @@ public class ClienteService {
 		}
 	}
 
+	// Conversores
 	private ClienteEntity converterParaEntity(ClienteDto clienteDto) {
 		return modelMapper.map(clienteDto, ClienteEntity.class);
 	}
-	
+
 	private ClienteDto converterParaDto(ClienteEntity cliente) {
 		return modelMapper.map(cliente, ClienteDto.class);
 	}

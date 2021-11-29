@@ -20,11 +20,13 @@ public class FornecedorService {
 	@Autowired
 	private ModelMapper modelMapper;
 
+	// Paginacao
 	public Page<FornecedorDto> buscaEspecifica(Pageable pageable) {
 		Page<FornecedorEntity> fornecedor = fornecedorRepository.findAll(pageable);
 		return fornecedor.map(item -> modelMapper.map(item, FornecedorDto.class));
 	}
 
+	// Buscando Fonecedor
 	public FornecedorDto getCnpj(String cnpj) throws NotFoundException {
 		FornecedorEntity fornecedor = fornecedorRepository.findByCnpj(cnpj);
 		FornecedorDto fornecedorDto = converterParaDto(fornecedor);
@@ -35,6 +37,7 @@ public class FornecedorService {
 		return fornecedorDto;
 	}
 
+	// Salvando Fonecedor
 	public FornecedorDto salvarFornecedorDto(FornecedorDto fornecedorDto) {
 		try {
 			FornecedorEntity fornecedor = fornecedorRepository.save(converParaEntity(fornecedorDto));
@@ -46,6 +49,7 @@ public class FornecedorService {
 		return fornecedorDto;
 	}
 
+	// Atualizando
 	public FornecedorDto alterarFornecedorDto(FornecedorDto fornecedorDto) {
 		try {
 			FornecedorEntity fornecedor = fornecedorRepository.save(converParaEntity(fornecedorDto));
@@ -57,6 +61,7 @@ public class FornecedorService {
 		return fornecedorDto;
 	}
 
+	// Atualizando
 	public FornecedorDto update(String cnpj, FornecedorDto fornecedorDto) throws NotFoundException {
 		FornecedorEntity fornecedor = fornecedorRepository.findByCnpj(cnpj);
 		FornecedorDto fornecedorDtoAntigo = converterParaDto(fornecedor);
@@ -67,6 +72,7 @@ public class FornecedorService {
 		return converterParaDto(fornecedorAtualizado);
 	}
 
+	// Conversores
 	private FornecedorDto converterParaDto(FornecedorEntity fornecedor) {
 		return modelMapper.map(fornecedor, FornecedorDto.class);
 	}

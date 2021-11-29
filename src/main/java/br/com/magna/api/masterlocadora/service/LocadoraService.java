@@ -20,11 +20,13 @@ public class LocadoraService {
 	@Autowired
 	private ModelMapper modelMapper;
 
+	// Paginacao
 	public Page<LocadoraDto> buscaEspecifica(Pageable pageable) {
 		Page<LocadoraEntity> locadora = locadoraRepository.findAll(pageable);
 		return locadora.map(item -> modelMapper.map(item, LocadoraDto.class));
 	}
 
+	// Buscando Locadora
 	public LocadoraDto getCnpj(String cnpj) throws NotFoundException {
 		LocadoraEntity locadora = locadoraRepository.findByCnpj(cnpj);
 		LocadoraDto locadoraDto = converterParaDto(locadora);
@@ -35,6 +37,7 @@ public class LocadoraService {
 		return locadoraDto;
 	}
 
+	// Salvando a Locadora
 	public LocadoraDto salvarLocadoraDto(LocadoraDto locadoraDto) {
 		try {
 			LocadoraEntity locadora = locadoraRepository.save(converParaEntity(locadoraDto));
@@ -57,6 +60,7 @@ public class LocadoraService {
 		return locadoraDto;
 	}
 
+	// Atualizando Locadora
 	public LocadoraDto update(String cnpj, LocadoraDto locadoraDto) throws NotFoundException {
 		LocadoraEntity locadora = locadoraRepository.findByCnpj(cnpj);
 		LocadoraDto locadoraDtoAntigo = converterParaDto(locadora);
@@ -67,6 +71,7 @@ public class LocadoraService {
 		return converterParaDto(locadoraAtualizado);
 	}
 
+	// Conversores
 	private LocadoraDto converterParaDto(LocadoraEntity locadora) {
 		return modelMapper.map(locadora, LocadoraDto.class);
 	}
