@@ -78,13 +78,4 @@ public class ClienteDto {
 		return Objects.equals(id, other.id) && Objects.equals(cpf, other.cpf) && Objects.equals(nome, other.nome);
 	}
 
-//	// Possivel Mudanca
-//	public static List<ClienteDto> converter(List<ClienteEntity> clienteDto) {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-//
-//	public static List<ClienteDto> converter(Optional<ClienteEntity> clienteDto) {
-//		// TODO Auto-generated method stub
-//		return null;
 }
