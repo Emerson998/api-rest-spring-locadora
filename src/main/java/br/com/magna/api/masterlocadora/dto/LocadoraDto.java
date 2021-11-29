@@ -42,11 +42,11 @@ public class LocadoraDto {
 				&& Objects.equals(endereco, other.endereco) && Objects.equals(id, other.id);
 	}
 
-	public Long getId() { // Provavel Mudanca
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Long id) { // Provavel Mudanca
+	public void setId(Long id) {
 		this.id = id;
 	}
 

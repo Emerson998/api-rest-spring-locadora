@@ -49,6 +49,7 @@ public class LocadoraService {
 		return locadoraDto;
 	}
 
+	// Atualizando Locadora
 	public LocadoraDto alterarClienteDto(LocadoraDto locadoraDto) {
 		try {
 			LocadoraEntity locadora = locadoraRepository.save(converParaEntity(locadoraDto));

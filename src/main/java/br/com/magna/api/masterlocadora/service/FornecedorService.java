@@ -49,7 +49,7 @@ public class FornecedorService {
 		return fornecedorDto;
 	}
 
-	// Atualizando
+	// Atualizando Fornecedor
 	public FornecedorDto alterarFornecedorDto(FornecedorDto fornecedorDto) {
 		try {
 			FornecedorEntity fornecedor = fornecedorRepository.save(converParaEntity(fornecedorDto));
@@ -61,7 +61,7 @@ public class FornecedorService {
 		return fornecedorDto;
 	}
 
-	// Atualizando
+	// Atualizando Fornecedor
 	public FornecedorDto update(String cnpj, FornecedorDto fornecedorDto) throws NotFoundException {
 		FornecedorEntity fornecedor = fornecedorRepository.findByCnpj(cnpj);
 		FornecedorDto fornecedorDtoAntigo = converterParaDto(fornecedor);
