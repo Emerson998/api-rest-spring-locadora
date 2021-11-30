@@ -1,5 +1,7 @@
 package br.com.magna.api.masterlocadora.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,7 +12,7 @@ import br.com.magna.api.masterlocadora.entity.FornecedorEntity;
 public interface FornecedorRepository extends PagingAndSortingRepository<FornecedorEntity, Long> {
 	FornecedorDto save(FornecedorDto fornecedor);
 
-	FornecedorEntity findByCnpj(String cnpj);
+	Optional<FornecedorEntity> findByCnpj(String cnpj);
 
 	String deleteByCnpj(String cnpj);
 }

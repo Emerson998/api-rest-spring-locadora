@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.magna.api.masterlocadora.dto.ClienteDto;
-import br.com.magna.api.masterlocadora.repository.ClienteRepository;
 import br.com.magna.api.masterlocadora.service.ClienteService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -32,14 +31,15 @@ public class ClienteController {
 	@Autowired
 	private ClienteService clienteService;
 
-	@Autowired
-	private ClienteRepository clienteRepository;
-
 	@ApiOperation(value = "Retorna Todos os Clientes")
 	@GetMapping
-	public ResponseEntity<Page<ClienteDto>> list(Pageable pageable) {
-
-		return ResponseEntity.ok(clienteService.buscaEspecifica(pageable));
+	public Page<ClienteDto> list(Pageable pageable) {
+		try {
+			return clienteService.paginacaoDaApi(pageable);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return null;
 	}
 
 	@ApiOperation(value = "Retorna Todos os Clientes Por Cpf")
@@ -49,20 +49,18 @@ public class ClienteController {
 			return ResponseEntity.ok(clienteService.getLogin(cpf));
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			System.out.println("Cliente não encontrado");
-			return ResponseEntity.notFound().build();
+       	return ResponseEntity.notFound().build();
 		}
 	}
 
 	@ApiOperation(value = "Salva os Clientes")
 	@PostMapping
-	public ResponseEntity<ClienteDto> post(@RequestBody ClienteDto clienteDto) throws Exception {
+	public ResponseEntity<ClienteDto> post(@RequestBody ClienteDto clienteDto) {
 		try {
-			ClienteDto resultado = clienteService.SalvandoClienteDto(clienteDto);
+			ClienteDto resultado = clienteService.salvandoClienteDto(clienteDto);
 			return ResponseEntity.status(HttpStatus.CREATED).body(resultado);
 		} catch (Exception ex) {
-			ex.printStackTrace();
-			System.out.println("Cliente não cadastrado");
+			ex.getMessage();
 			return ResponseEntity.noContent().build();
 		}
 
@@ -76,11 +74,11 @@ public class ClienteController {
 		try {
 			ClienteDto clienteDtoAltera = clienteService.update(cpf, clienteDto);
 			return ResponseEntity.ok(clienteDtoAltera);
+		} catch (NotFoundException ex) {
 		} catch (Exception ex) {
-			ex.printStackTrace();
-			System.out.println("Cliente não encontrado");
 			return ResponseEntity.notFound().build();
 		}
+		return null;
 	}
 
 	// Deletando usuario
@@ -92,7 +90,6 @@ public class ClienteController {
 			return ResponseEntity.ok().build();
 		} catch (NotFoundException ex) {
 			ex.printStackTrace();
-			System.out.println("Cliente não encontrado");
 			return ResponseEntity.notFound().build();
 		}
 	}

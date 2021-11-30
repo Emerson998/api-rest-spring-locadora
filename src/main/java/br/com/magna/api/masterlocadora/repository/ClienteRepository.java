@@ -1,5 +1,7 @@
 package br.com.magna.api.masterlocadora.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,7 +12,7 @@ import br.com.magna.api.masterlocadora.entity.ClienteEntity;
 public interface ClienteRepository extends PagingAndSortingRepository<ClienteEntity, Long> {
 	ClienteDto save(ClienteDto cliente);
 
-	ClienteEntity findByCpf(String cpf);
+	Optional<ClienteEntity> findByCpf(String cpf);
 
 	ClienteEntity save(String locadora);
 

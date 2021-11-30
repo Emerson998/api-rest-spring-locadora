@@ -7,20 +7,12 @@ import br.com.magna.api.masterlocadora.entity.LocadoraEntity;
 
 public class ClienteDto {
 
-	private Long id;
 	private String nome;
 	private String cpf;
 	private LocadoraEntity locadora;
 
 	public ClienteDto() {
 
-	}
-
-	public ClienteDto(Long id, String nome, String cpf, LocadoraEntity locadora) {
-		this.id = id;
-		this.nome = nome;
-		this.cpf = cpf;
-		this.locadora = locadora;
 	}
 
 	public LocadoraEntity getLocadora() {
@@ -34,14 +26,6 @@ public class ClienteDto {
 	public ClienteDto(ClienteEntity cliente) {
 		this.nome = cliente.getNome();
 		this.cpf = cliente.getCpf();
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public String getNome() {
@@ -61,8 +45,13 @@ public class ClienteDto {
 	}
 
 	@Override
+	public String toString() {
+		return "ClienteDto [nome=" + nome + ", cpf=" + cpf + ", locadora=" + locadora + "]";
+	}
+
+	@Override
 	public int hashCode() {
-		return Objects.hash(id, cpf, nome);
+		return Objects.hash(cpf, locadora, nome);
 	}
 
 	@Override
@@ -74,7 +63,8 @@ public class ClienteDto {
 		if (getClass() != obj.getClass())
 			return false;
 		ClienteDto other = (ClienteDto) obj;
-		return Objects.equals(id, other.id) && Objects.equals(cpf, other.cpf) && Objects.equals(nome, other.nome);
+		return Objects.equals(cpf, other.cpf) && Objects.equals(locadora, other.locadora)
+				&& Objects.equals(nome, other.nome);
 	}
 
 }

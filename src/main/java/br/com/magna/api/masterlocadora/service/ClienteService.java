@@ -1,6 +1,10 @@
 package br.com.magna.api.masterlocadora.service;
 
+import java.util.Optional;
+
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
@@ -9,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.com.caelum.stella.validation.CPFValidator;
+import br.com.caelum.stella.validation.InvalidStateException;
 import br.com.magna.api.masterlocadora.dto.ClienteDto;
 import br.com.magna.api.masterlocadora.entity.ClienteEntity;
 import br.com.magna.api.masterlocadora.repository.ClienteRepository;
@@ -22,81 +27,98 @@ public class ClienteService {
 	@Autowired
 	private ModelMapper modelMapper;
 
+	Logger log = LoggerFactory.getLogger(ClienteService.class);
+
 	// Paginacao
-	public Page<ClienteDto> buscaEspecifica(Pageable pageable) {
-		Page<ClienteEntity> cliente = clienteRepository.findAll(pageable);
-		return cliente.map(item -> modelMapper.map(item, ClienteDto.class));
+	public Page<ClienteDto> paginacaoDaApi(Pageable pageable) {
+		try {
+			Page<ClienteEntity> cliente = clienteRepository.findAll(pageable);
+			return cliente.map(item -> modelMapper.map(item, ClienteDto.class));
+		} catch (Exception ex) {
+			throw ex;
+		}
 	}
 
 	// Buscando Clientes
 	public ClienteDto getLogin(String cpf) throws NotFoundException {
-		ClienteEntity cliente = clienteRepository.findByCpf(cpf);
-		ClienteDto usuarioDto = converterParaDto(cliente);
-
-		if (usuarioDto == null) {
-			throw new NotFoundException();
+		try {
+			log.info("Validando CPF : ");
+			Optional<ClienteEntity> clienteOptional = clienteRepository.findByCpf(cpf);
+			ClienteEntity cliente = clienteOptional.orElseThrow(() -> new NotFoundException());
+			ClienteDto usuarioDto = converterParaDto(cliente);
+			return usuarioDto;
+		} catch (InvalidStateException ie) {
+			log.error(ie.getMessage());
+			return null;
+		} catch (Exception ie) {
+			log.error(ie.getMessage());
+			return null;
 		}
-		return usuarioDto;
 	}
 
 	// Salvando Clientes
-	public ClienteDto SalvandoClienteDto(ClienteDto clienteDtoSave) throws Exception {
+	public ClienteDto salvandoClienteDto(ClienteDto clienteDtoSave) throws Exception {
+		ClienteDto clienteRetorno = null;
 		try {
-			if (ValidandoCpf(clienteDtoSave.getCpf())) {
-				ClienteEntity cliente = modelMapper.map(clienteDtoSave, ClienteEntity.class);
-				@SuppressWarnings("unused")
-				ClienteEntity clienteEntity = clienteRepository.save(cliente);
-				return clienteDtoSave;
-			} else {
-				System.out.println("Cpf Invalido");
-			}
-
+			log.info("Validando CPF: " + clienteDtoSave.getCpf());
+			validandoCpf(clienteDtoSave.getCpf());
+			ClienteEntity cliente = modelMapper.map(clienteDtoSave, ClienteEntity.class);
+			ClienteEntity clienteEntity = clienteRepository.save(cliente);
+			clienteRetorno = modelMapper.map(clienteEntity, ClienteDto.class);
+			log.info("Cliente Criado com Sucesso");
+		} catch (InvalidStateException ie) {
+			log.error(ie.getMessage());
 		} catch (Exception e) {
 			throw e;
 		}
-		return null;
+		return clienteRetorno;
 	}
 
 	// Atualizando Clientes
 	public ClienteDto alterarClienteDto(ClienteDto clienteDto) {
 		try {
+			log.info("Atualizando Cliente : ");
 			ClienteEntity cliente = clienteRepository.save(converterParaEntity(clienteDto));
 			ClienteDto clienteDtoSalvo = converterParaDto(cliente);
 			return clienteDtoSalvo;
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		} catch (Exception ie) {
+			log.error(ie.getMessage());
 		}
 		return clienteDto;
 	}
 
 	// Atualizando Clientes
 	public ClienteDto update(String cpf, ClienteDto clienteDto) throws NotFoundException {
+		try {
+			ClienteEntity cliente = clienteRepository.findByCpf(cpf).get();
+			ClienteDto clienteDtoAntigo = converterParaDto(cliente);
+			BeanUtils.copyProperties(clienteDto, clienteDtoAntigo, "cliente");
+			ClienteEntity convertEntity = converterParaEntity(clienteDto);
+			convertEntity.setId(cliente.getId());
+			ClienteEntity clienteAtualizado = clienteRepository.save(convertEntity);
+			return converterParaDto(clienteAtualizado);
+		} catch (Exception ie) {
+			log.error(ie.getMessage());
 
-		ClienteEntity cliente = clienteRepository.findByCpf(cpf);
-		ClienteDto clienteDtoAntigo = converterParaDto(cliente);
-		BeanUtils.copyProperties(clienteDto, clienteDtoAntigo, "cliente");
-		ClienteEntity convertEntity = converterParaEntity(clienteDto);
-		convertEntity.setId(cliente.getId());
-		ClienteEntity clienteAtualizado = clienteRepository.save(convertEntity);
-		return converterParaDto(clienteAtualizado);
+		}
+		return clienteDto;
 	}
 
 	// Apenas Cpfs Validos
-	public static boolean ValidandoCpf(String cpf) {
+	public void validandoCpf(String cpf) {
 		CPFValidator cpfValidator = new CPFValidator();
+		cpfValidator.assertValid(cpf);
+	}
+
+	// Delete Um Cliente
+	public void delete(String cpf) throws NotFoundException {
 		try {
-			cpfValidator.assertValid(cpf);
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
+			log.info("Removendo Cliente : ");
+			clienteRepository.deleteByCpf(cpf);
+		} catch (Exception ie) {
+			log.error(ie.getMessage());
 		}
 	}
-	
-	// Delete Um Cliente
-		public void delete(String cpf) throws NotFoundException {
-			clienteRepository.deleteByCpf(cpf);
-		}
 
 	// Conversores
 	private ClienteEntity converterParaEntity(ClienteDto clienteDto) {

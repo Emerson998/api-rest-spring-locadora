@@ -17,9 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.magna.api.masterlocadora.dto.ClienteDto;
 import br.com.magna.api.masterlocadora.dto.FornecedorDto;
-import br.com.magna.api.masterlocadora.repository.FornecedorRepository;
 import br.com.magna.api.masterlocadora.service.FornecedorService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,37 +31,36 @@ public class FornecedorController {
 	@Autowired
 	private FornecedorService fornecedorService;
 
-	@Autowired
-	private FornecedorRepository fornecedorRepository;
-
 	@ApiOperation(value = "Retorna Todos os Fornecedores")
 	@GetMapping
-	public ResponseEntity<Page<FornecedorDto>> list(Pageable pageable) {
-
-		return ResponseEntity.ok(fornecedorService.buscaEspecifica(pageable));
+	public Page<FornecedorDto> list(Pageable pageable) {
+		try {
+			return fornecedorService.paginacaoDaApi(pageable);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return null;
 	}
 
 	@ApiOperation(value = "Retorna Todos os Fornecedores Por Cnpj")
 	@GetMapping("/{cnpj}")
-	public ResponseEntity<FornecedorDto> listCnpj(@PathVariable String cnpj) throws NotFoundException {
+	public ResponseEntity<FornecedorDto> listLogin(@PathVariable String cnpj) throws NotFoundException {
 		try {
-			return ResponseEntity.ok(fornecedorService.getCnpj(cnpj));
+			return ResponseEntity.ok(fornecedorService.getLogin(cnpj));
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			System.out.println("Fornecedor não encontrado");
 			return ResponseEntity.notFound().build();
 		}
 	}
 
-	@ApiOperation(value = "Cadastra Fornecedor")
+	@ApiOperation(value = "Salva os Clientes")
 	@PostMapping
-	public ResponseEntity<FornecedorDto> post(@RequestBody FornecedorDto fornecedorDto) throws Exception {
+	public ResponseEntity<FornecedorDto> post(@RequestBody FornecedorDto fornecedorDto) {
 		try {
-			FornecedorDto resultado = fornecedorService.salvarFornecedorDto(fornecedorDto);
+			FornecedorDto resultado = fornecedorService.salvandoFornecedorDto(fornecedorDto);
 			return ResponseEntity.status(HttpStatus.CREATED).body(resultado);
 		} catch (Exception ex) {
-			ex.printStackTrace();
-			System.out.println("Fornecedor não cadastrado");
+			ex.getMessage();
 			return ResponseEntity.noContent().build();
 		}
 
@@ -79,7 +76,6 @@ public class FornecedorController {
 			return ResponseEntity.ok(fornecedorDtoAltera);
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			System.out.println("Fornecedor não encontrado");
 			return ResponseEntity.notFound().build();
 		}
 	}
@@ -93,8 +89,10 @@ public class FornecedorController {
 			return ResponseEntity.ok().build();
 		} catch (NotFoundException ex) {
 			ex.printStackTrace();
-			System.out.println("Fornecedor não encontrado");
+		} catch (Exception ex) {
+			ex.printStackTrace();
 			return ResponseEntity.notFound().build();
 		}
+		return null;
 	}
 }

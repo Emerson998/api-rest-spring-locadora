@@ -3,7 +3,7 @@ package br.com.magna.api.masterlocadora.dto;
 import java.util.Objects;
 
 public class LocadoraDto {
-	private Long id;
+
 	private String endereco;
 	private String dvdNome;
 	private String cnpj;
@@ -12,21 +12,14 @@ public class LocadoraDto {
 
 	}
 
-	public LocadoraDto(Long id, String endereco, String dvdNome, String cnpj) {
-		this.id = id;
-		this.endereco = endereco;
-		this.dvdNome = dvdNome;
-		this.cnpj = cnpj;
-	}
-
 	@Override
 	public String toString() {
-		return "LocadoraDto [id=" + id + ", endereco=" + endereco + ", dvdNome=" + dvdNome + ", cnpj=" + cnpj + "]";
+		return "LocadoraDto [endereco=" + endereco + ", dvdNome=" + dvdNome + ", cnpj=" + cnpj + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(cnpj, dvdNome, endereco, id);
+		return Objects.hash(cnpj, dvdNome, endereco);
 	}
 
 	@Override
@@ -39,15 +32,7 @@ public class LocadoraDto {
 			return false;
 		LocadoraDto other = (LocadoraDto) obj;
 		return Objects.equals(cnpj, other.cnpj) && Objects.equals(dvdNome, other.dvdNome)
-				&& Objects.equals(endereco, other.endereco) && Objects.equals(id, other.id);
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
+				&& Objects.equals(endereco, other.endereco);
 	}
 
 	public String getEndereco() {

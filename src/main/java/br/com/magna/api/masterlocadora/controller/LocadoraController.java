@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.magna.api.masterlocadora.dto.LocadoraDto;
-import br.com.magna.api.masterlocadora.repository.LocadoraRepository;
 import br.com.magna.api.masterlocadora.service.LocadoraService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,41 +27,40 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("/locadora")
 
 public class LocadoraController {
-
+	// Locadora
 	@Autowired
 	private LocadoraService locadoraService;
 
-	@Autowired
-	private LocadoraRepository clienteRepository;
-
-	@ApiOperation(value = "Retorna Todos os Clientes")
+	@ApiOperation(value = "Retorna Todos os Fornecedores")
 	@GetMapping
-	public ResponseEntity<Page<LocadoraDto>> list(Pageable pageable) {
-
-		return ResponseEntity.ok(locadoraService.buscaEspecifica(pageable));
-	}
-
-	@ApiOperation(value = "Retorna Todos os Clientes Por Cnpj")
-	@GetMapping("/{cnpj}")
-	public ResponseEntity<LocadoraDto> listCnpj(@PathVariable String cnpj) throws NotFoundException {
+	public Page<LocadoraDto> list(Pageable pageable) {
 		try {
-			return ResponseEntity.ok(locadoraService.getCnpj(cnpj));
+			return locadoraService.buscarTodos(pageable);
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			System.out.println("Locadora não encontrado");
-			return ResponseEntity.notFound().build();
 		}
+		return null;
 	}
 
-	@ApiOperation(value = "Cadastra os Clientes")
-	@PostMapping
-	public ResponseEntity<LocadoraDto> post(@RequestBody LocadoraDto locadoraDto) throws Exception {
+	@ApiOperation(value = "Retorna Todos os Fornecedores Por Cnpj")
+	@GetMapping("/{cnpj}")
+	public ResponseEntity<LocadoraDto> listLogin(@PathVariable String cnpj) throws NotFoundException {
 		try {
-			LocadoraDto resultado = locadoraService.salvarLocadoraDto(locadoraDto);
+			return ResponseEntity.ok(locadoraService.getLogin(cnpj));
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return ResponseEntity.notFound().build();
+		} // Locadora locadora
+	}
+
+	@ApiOperation(value = "Salva os Locadora")
+	@PostMapping
+	public ResponseEntity<LocadoraDto> post(@RequestBody LocadoraDto locadoraDto) {
+		try {
+			LocadoraDto resultado = locadoraService.salvandoLocadoraDto(locadoraDto);
 			return ResponseEntity.status(HttpStatus.CREATED).body(resultado);
 		} catch (Exception ex) {
-			ex.printStackTrace();
-			System.out.println("Locadora não cadastrada");
+			ex.getMessage();
 			return ResponseEntity.noContent().build();
 		}
 
@@ -78,7 +76,6 @@ public class LocadoraController {
 			return ResponseEntity.ok(locadoraDtoAltera);
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			System.out.println("Locadora não encontrado");
 			return ResponseEntity.notFound().build();
 		}
 	}
@@ -92,8 +89,10 @@ public class LocadoraController {
 			return ResponseEntity.ok().build();
 		} catch (NotFoundException ex) {
 			ex.printStackTrace();
-			System.out.println("Locadora não encontrada");
+		} catch (Exception ex) {
+			ex.printStackTrace();
 			return ResponseEntity.notFound().build();
 		}
+		return null;
 	}
 }
