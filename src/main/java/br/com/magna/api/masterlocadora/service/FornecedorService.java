@@ -72,6 +72,11 @@ public class FornecedorService {
 		return converterParaDto(fornecedorAtualizado);
 	}
 
+	// Deletando um usuario
+	public void delete(String cnpj) throws NotFoundException {
+		fornecedorRepository.deleteByCnpj(cnpj);
+	}
+
 	// Conversores
 	private FornecedorDto converterParaDto(FornecedorEntity fornecedor) {
 		return modelMapper.map(fornecedor, FornecedorDto.class);

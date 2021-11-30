@@ -11,4 +11,6 @@ public interface FornecedorRepository extends PagingAndSortingRepository<Fornece
 	FornecedorDto save(FornecedorDto fornecedor);
 
 	FornecedorEntity findByCnpj(String cnpj);
+
+	String deleteByCnpj(String cnpj);
 }

@@ -14,5 +14,6 @@ public interface ClienteRepository extends PagingAndSortingRepository<ClienteEnt
 
 	ClienteEntity save(String locadora);
 
+	String deleteByCpf(String cpf);
 
 }

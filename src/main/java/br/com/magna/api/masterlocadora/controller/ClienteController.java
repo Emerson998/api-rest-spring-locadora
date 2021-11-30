@@ -22,6 +22,7 @@ import br.com.magna.api.masterlocadora.repository.ClienteRepository;
 import br.com.magna.api.masterlocadora.service.ClienteService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+
 @Api
 @RestController
 @RequestMapping("/cliente")
@@ -82,12 +83,17 @@ public class ClienteController {
 		}
 	}
 
-	@ApiOperation(value = "Deleta os Clientes")
-	@DeleteMapping("/{id}")
-	public ResponseEntity<ClienteDto> remover(@PathVariable Long id) {
-		clienteRepository.deleteById(id);
-		return ResponseEntity.ok().build();
-
+	// Deletando usuario
+	@DeleteMapping("/{cpf}")
+	@Transactional
+	public ResponseEntity<ClienteDto> delete(@PathVariable String cpf) throws NotFoundException {
+		try {
+			clienteService.delete(cpf);
+			return ResponseEntity.ok().build();
+		} catch (NotFoundException ex) {
+			ex.printStackTrace();
+			System.out.println("Cliente não encontrado");
+			return ResponseEntity.notFound().build();
+		}
 	}
-
 }

@@ -12,4 +12,6 @@ public interface LocadoraRepository extends PagingAndSortingRepository<LocadoraE
 
 	LocadoraEntity findByCnpj(String cnpj);
 
+	String deleteByCnpj(String cnpj);
+
 }

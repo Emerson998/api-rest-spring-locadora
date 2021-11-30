@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.magna.api.masterlocadora.dto.ClienteDto;
 import br.com.magna.api.masterlocadora.dto.LocadoraDto;
 import br.com.magna.api.masterlocadora.repository.LocadoraRepository;
 import br.com.magna.api.masterlocadora.service.LocadoraService;
@@ -35,7 +34,7 @@ public class LocadoraController {
 
 	@Autowired
 	private LocadoraRepository clienteRepository;
-    
+
 	@ApiOperation(value = "Retorna Todos os Clientes")
 	@GetMapping
 	public ResponseEntity<Page<LocadoraDto>> list(Pageable pageable) {
@@ -57,7 +56,7 @@ public class LocadoraController {
 
 	@ApiOperation(value = "Cadastra os Clientes")
 	@PostMapping
-    public ResponseEntity<LocadoraDto> post(@RequestBody LocadoraDto locadoraDto) throws Exception {
+	public ResponseEntity<LocadoraDto> post(@RequestBody LocadoraDto locadoraDto) throws Exception {
 		try {
 			LocadoraDto resultado = locadoraService.salvarLocadoraDto(locadoraDto);
 			return ResponseEntity.status(HttpStatus.CREATED).body(resultado);
@@ -85,11 +84,16 @@ public class LocadoraController {
 	}
 
 	@ApiOperation(value = "Deleta Clientes")
-	@DeleteMapping("/{id}")
-	public ResponseEntity<ClienteDto> remover(@PathVariable Long id) {
-		clienteRepository.deleteById(id);
-		return ResponseEntity.ok().build();
-
+	@DeleteMapping("/{cnpj}")
+	@Transactional
+	public ResponseEntity<LocadoraDto> delete(@PathVariable String cnpj) throws NotFoundException {
+		try {
+			locadoraService.delete(cnpj);
+			return ResponseEntity.ok().build();
+		} catch (NotFoundException ex) {
+			ex.printStackTrace();
+			System.out.println("Locadora não encontrada");
+			return ResponseEntity.notFound().build();
+		}
 	}
-
 }

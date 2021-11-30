@@ -92,6 +92,11 @@ public class ClienteService {
 			return false;
 		}
 	}
+	
+	// Delete Um Cliente
+		public void delete(String cpf) throws NotFoundException {
+			clienteRepository.deleteByCpf(cpf);
+		}
 
 	// Conversores
 	private ClienteEntity converterParaEntity(ClienteDto clienteDto) {

@@ -72,6 +72,11 @@ public class LocadoraService {
 		return converterParaDto(locadoraAtualizado);
 	}
 
+	// Deletando um usuario
+	public void delete(String cnpj) throws NotFoundException {
+		locadoraRepository.deleteByCnpj(cnpj);
+	}
+
 	// Conversores
 	private LocadoraDto converterParaDto(LocadoraEntity locadora) {
 		return modelMapper.map(locadora, LocadoraDto.class);

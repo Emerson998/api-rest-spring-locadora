@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.magna.api.masterlocadora.dto.ClienteDto;
 import br.com.magna.api.masterlocadora.dto.FornecedorDto;
 import br.com.magna.api.masterlocadora.repository.FornecedorRepository;
 import br.com.magna.api.masterlocadora.service.FornecedorService;
@@ -69,12 +70,12 @@ public class FornecedorController {
 	}
 
 	@ApiOperation(value = "Atualiza Fornecedor")
-	@PutMapping("/{cpf}")
+	@PutMapping("/{cnpj}")
 	@Transactional
-	public ResponseEntity<FornecedorDto> put(@PathVariable String cpf, @RequestBody FornecedorDto fornecedorDto)
+	public ResponseEntity<FornecedorDto> put(@PathVariable String cnpj, @RequestBody FornecedorDto fornecedorDto)
 			throws Exception {
 		try {
-			FornecedorDto fornecedorDtoAltera = fornecedorService.update(cpf, fornecedorDto);
+			FornecedorDto fornecedorDtoAltera = fornecedorService.update(cnpj, fornecedorDto);
 			return ResponseEntity.ok(fornecedorDtoAltera);
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -83,11 +84,17 @@ public class FornecedorController {
 		}
 	}
 
-	@ApiOperation(value = "Deleta Fornecedor")
-	@DeleteMapping("/{id}")
-	public ResponseEntity<FornecedorDto> remover(@PathVariable Long id) {
-		fornecedorRepository.deleteById(id);
-		return ResponseEntity.ok().build();
-
+	// Deletando usuario
+	@DeleteMapping("/{cnpj}")
+	@Transactional
+	public ResponseEntity<FornecedorDto> delete(@PathVariable String cnpj) throws NotFoundException {
+		try {
+			fornecedorService.delete(cnpj);
+			return ResponseEntity.ok().build();
+		} catch (NotFoundException ex) {
+			ex.printStackTrace();
+			System.out.println("Fornecedor não encontrado");
+			return ResponseEntity.notFound().build();
+		}
 	}
 }
