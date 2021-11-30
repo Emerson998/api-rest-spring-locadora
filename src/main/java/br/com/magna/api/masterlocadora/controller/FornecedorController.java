@@ -87,7 +87,7 @@ public class FornecedorController {
 	// Deletando usuario
 	@DeleteMapping("/{cnpj}")
 	@Transactional
-	public ResponseEntity<FornecedorDto> delete(@PathVariable String cnpj) throws NotFoundException {
+	public ResponseEntity<FornecedorDto> deletando(@PathVariable String cnpj) throws NotFoundException {
 		try {
 			fornecedorService.delete(cnpj);
 			return ResponseEntity.ok().build();

@@ -86,7 +86,7 @@ public class ClienteController {
 	// Deletando usuario
 	@DeleteMapping("/{cpf}")
 	@Transactional
-	public ResponseEntity<ClienteDto> delete(@PathVariable String cpf) throws NotFoundException {
+	public ResponseEntity<ClienteDto> deletando(@PathVariable String cpf) throws NotFoundException {
 		try {
 			clienteService.delete(cpf);
 			return ResponseEntity.ok().build();

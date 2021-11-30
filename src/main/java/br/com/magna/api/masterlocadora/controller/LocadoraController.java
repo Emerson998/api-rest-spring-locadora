@@ -86,7 +86,7 @@ public class LocadoraController {
 	@ApiOperation(value = "Deleta Clientes")
 	@DeleteMapping("/{cnpj}")
 	@Transactional
-	public ResponseEntity<LocadoraDto> delete(@PathVariable String cnpj) throws NotFoundException {
+	public ResponseEntity<LocadoraDto> deletando(@PathVariable String cnpj) throws NotFoundException {
 		try {
 			locadoraService.delete(cnpj);
 			return ResponseEntity.ok().build();
