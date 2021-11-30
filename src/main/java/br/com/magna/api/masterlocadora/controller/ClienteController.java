@@ -33,7 +33,7 @@ public class ClienteController {
 
 	@ApiOperation(value = "Retorna Todos os Clientes")
 	@GetMapping
-	public Page<ClienteDto> list(Pageable pageable) {
+	public Page<ClienteDto> lista(Pageable pageable) {
 		try {
 			return clienteService.paginacaoDaApi(pageable);
 		} catch (Exception ex) {
@@ -44,18 +44,18 @@ public class ClienteController {
 
 	@ApiOperation(value = "Retorna Todos os Clientes Por Cpf")
 	@GetMapping("/{cpf}")
-	public ResponseEntity<ClienteDto> listLogin(@PathVariable String cpf) throws NotFoundException {
+	public ResponseEntity<ClienteDto> listarCliente(@PathVariable String cpf) throws NotFoundException {
 		try {
-			return ResponseEntity.ok(clienteService.getLogin(cpf));
+			return ResponseEntity.ok(clienteService.buscaCliente(cpf));
 		} catch (Exception ex) {
 			ex.printStackTrace();
-       	return ResponseEntity.notFound().build();
+			return ResponseEntity.notFound().build();
 		}
 	}
 
 	@ApiOperation(value = "Salva os Clientes")
 	@PostMapping
-	public ResponseEntity<ClienteDto> post(@RequestBody ClienteDto clienteDto) {
+	public ResponseEntity<ClienteDto> salvarCliente(@RequestBody ClienteDto clienteDto) {
 		try {
 			ClienteDto resultado = clienteService.salvandoClienteDto(clienteDto);
 			return ResponseEntity.status(HttpStatus.CREATED).body(resultado);
@@ -69,10 +69,10 @@ public class ClienteController {
 	@ApiOperation(value = "Atualiza os Clientes")
 	@PutMapping("/{cpf}")
 	@Transactional
-	public ResponseEntity<ClienteDto> put(@PathVariable String cpf, @RequestBody ClienteDto clienteDto)
+	public ResponseEntity<ClienteDto> atualizarClientes(@PathVariable String cpf, @RequestBody ClienteDto clienteDto)
 			throws Exception {
 		try {
-			ClienteDto clienteDtoAltera = clienteService.update(cpf, clienteDto);
+			ClienteDto clienteDtoAltera = clienteService.atualiza(cpf, clienteDto);
 			return ResponseEntity.ok(clienteDtoAltera);
 		} catch (NotFoundException ex) {
 		} catch (Exception ex) {

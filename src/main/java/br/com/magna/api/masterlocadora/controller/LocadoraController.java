@@ -33,7 +33,7 @@ public class LocadoraController {
 
 	@ApiOperation(value = "Retorna Todos os Fornecedores")
 	@GetMapping
-	public Page<LocadoraDto> list(Pageable pageable) {
+	public Page<LocadoraDto> lista(Pageable pageable) {
 		try {
 			return locadoraService.buscarTodos(pageable);
 		} catch (Exception ex) {
@@ -44,7 +44,7 @@ public class LocadoraController {
 
 	@ApiOperation(value = "Retorna Todos os Fornecedores Por Cnpj")
 	@GetMapping("/{cnpj}")
-	public ResponseEntity<LocadoraDto> listLogin(@PathVariable String cnpj) throws NotFoundException {
+	public ResponseEntity<LocadoraDto> listaFornecedor(@PathVariable String cnpj) throws NotFoundException {
 		try {
 			return ResponseEntity.ok(locadoraService.getLogin(cnpj));
 		} catch (Exception ex) {
@@ -55,7 +55,7 @@ public class LocadoraController {
 
 	@ApiOperation(value = "Salva os Locadora")
 	@PostMapping
-	public ResponseEntity<LocadoraDto> post(@RequestBody LocadoraDto locadoraDto) {
+	public ResponseEntity<LocadoraDto> salvaLocadora(@RequestBody LocadoraDto locadoraDto) {
 		try {
 			LocadoraDto resultado = locadoraService.salvandoLocadoraDto(locadoraDto);
 			return ResponseEntity.status(HttpStatus.CREATED).body(resultado);
@@ -69,10 +69,10 @@ public class LocadoraController {
 	@ApiOperation(value = "Altera Clientes")
 	@PutMapping("/{cnpj}")
 	@Transactional
-	public ResponseEntity<LocadoraDto> put(@PathVariable String cnpj, @RequestBody LocadoraDto locadoraDto)
+	public ResponseEntity<LocadoraDto> atualizaClientes(@PathVariable String cnpj, @RequestBody LocadoraDto locadoraDto)
 			throws Exception {
 		try {
-			LocadoraDto locadoraDtoAltera = locadoraService.update(cnpj, locadoraDto);
+			LocadoraDto locadoraDtoAltera = locadoraService.atualiza(cnpj, locadoraDto);
 			return ResponseEntity.ok(locadoraDtoAltera);
 		} catch (Exception ex) {
 			ex.printStackTrace();

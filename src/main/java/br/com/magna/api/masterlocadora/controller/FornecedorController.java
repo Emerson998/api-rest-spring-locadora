@@ -33,7 +33,7 @@ public class FornecedorController {
 
 	@ApiOperation(value = "Retorna Todos os Fornecedores")
 	@GetMapping
-	public Page<FornecedorDto> list(Pageable pageable) {
+	public Page<FornecedorDto> lista(Pageable pageable) {
 		try {
 			return fornecedorService.paginacaoDaApi(pageable);
 		} catch (Exception ex) {
@@ -46,16 +46,16 @@ public class FornecedorController {
 	@GetMapping("/{cnpj}")
 	public ResponseEntity<FornecedorDto> listLogin(@PathVariable String cnpj) throws NotFoundException {
 		try {
-			return ResponseEntity.ok(fornecedorService.getLogin(cnpj));
+			return ResponseEntity.ok(fornecedorService.buscaFornecedor(cnpj));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return ResponseEntity.notFound().build();
 		}
 	}
 
-	@ApiOperation(value = "Salva os Clientes")
+	@ApiOperation(value = "Salva os Fornecedores")
 	@PostMapping
-	public ResponseEntity<FornecedorDto> post(@RequestBody FornecedorDto fornecedorDto) {
+	public ResponseEntity<FornecedorDto> salvaFornecedor(@RequestBody FornecedorDto fornecedorDto) {
 		try {
 			FornecedorDto resultado = fornecedorService.salvandoFornecedorDto(fornecedorDto);
 			return ResponseEntity.status(HttpStatus.CREATED).body(resultado);
@@ -69,10 +69,10 @@ public class FornecedorController {
 	@ApiOperation(value = "Atualiza Fornecedor")
 	@PutMapping("/{cnpj}")
 	@Transactional
-	public ResponseEntity<FornecedorDto> put(@PathVariable String cnpj, @RequestBody FornecedorDto fornecedorDto)
-			throws Exception {
+	public ResponseEntity<FornecedorDto> atualizaFornecedor(@PathVariable String cnpj,
+			@RequestBody FornecedorDto fornecedorDto) throws Exception {
 		try {
-			FornecedorDto fornecedorDtoAltera = fornecedorService.update(cnpj, fornecedorDto);
+			FornecedorDto fornecedorDtoAltera = fornecedorService.atualiza(cnpj, fornecedorDto);
 			return ResponseEntity.ok(fornecedorDtoAltera);
 		} catch (Exception ex) {
 			ex.printStackTrace();

@@ -39,7 +39,7 @@ public class FornecedorService {
 	}
 
 	// Buscando Fornecedores
-	public FornecedorDto getLogin(String cnpj) throws NotFoundException {
+	public FornecedorDto buscaFornecedor(String cnpj) throws NotFoundException {
 		try {
 			log.info("Validando CPF : ");
 			Optional<FornecedorEntity> fornecedorOptional = fornecedorRepository.findByCnpj(cnpj);
@@ -86,7 +86,7 @@ public class FornecedorService {
 	}
 
 	// Atualizando Fornecedores
-	public FornecedorDto update(String cnpj, FornecedorDto fornecedorDto) throws NotFoundException {
+	public FornecedorDto atualiza(String cnpj, FornecedorDto fornecedorDto) throws NotFoundException {
 		try {
 			FornecedorEntity fornecedor = fornecedorRepository.findByCnpj(cnpj).get();
 			FornecedorDto fornecedorDtoAntigo = converterParaDto(fornecedor);

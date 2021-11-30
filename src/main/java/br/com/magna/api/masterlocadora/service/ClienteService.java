@@ -40,7 +40,7 @@ public class ClienteService {
 	}
 
 	// Buscando Clientes
-	public ClienteDto getLogin(String cpf) throws NotFoundException {
+	public ClienteDto buscaCliente(String cpf) throws NotFoundException {
 		try {
 			log.info("Validando CPF : ");
 			Optional<ClienteEntity> clienteOptional = clienteRepository.findByCpf(cpf);
@@ -88,7 +88,7 @@ public class ClienteService {
 	}
 
 	// Atualizando Clientes
-	public ClienteDto update(String cpf, ClienteDto clienteDto) throws NotFoundException {
+	public ClienteDto atualiza(String cpf, ClienteDto clienteDto) throws NotFoundException {
 		try {
 			ClienteEntity cliente = clienteRepository.findByCpf(cpf).get();
 			ClienteDto clienteDtoAntigo = converterParaDto(cliente);

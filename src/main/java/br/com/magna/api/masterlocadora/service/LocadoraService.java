@@ -86,7 +86,7 @@ public class LocadoraService {
 	}
 
 	// Atualizando Locadora
-	public LocadoraDto update(String cnpj, LocadoraDto locadoraDto) throws NotFoundException {
+	public LocadoraDto atualiza(String cnpj, LocadoraDto locadoraDto) throws NotFoundException {
 		try {
 			LocadoraEntity locadora = locadoraRepository.findByCnpj(cnpj).get();
 			LocadoraDto locadoraDtoAntigo = converterParaDto(locadora);
