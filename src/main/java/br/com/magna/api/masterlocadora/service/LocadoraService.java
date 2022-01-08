@@ -26,25 +26,25 @@ public class LocadoraService {
 	@Autowired
 	private ModelMapper modelMapper;
 
-	Logger log = LoggerFactory.getLogger(LocadoraService.class);
+	Logger log = LoggerFactory.getLogger(ClienteService.class);
 
-	// Paginacao
-	public Page<LocadoraDto> buscarTodos(Pageable pageable) {
+	public Page<LocadoraDto> page(Pageable pageable) {
 		try {
+			log.info("Busca Todos os Fornecedores");
 			Page<LocadoraEntity> locadora = locadoraRepository.findAll(pageable);
 			return locadora.map(item -> modelMapper.map(item, LocadoraDto.class));
 		} catch (Exception ex) {
-			throw ex;
+			log.error(ex.getMessage());
 		}
+		return null;
 	}
 
-	// Buscando Locadoras
-	public LocadoraDto getLogin(String cnpj) throws NotFoundException {
+	public LocadoraDto search(String cnpj) {
 		try {
-			log.info("Validando CPF : ");
+			log.info("Busca individual pelo Cnpj : " + cnpj);
 			Optional<LocadoraEntity> locadoraOptional = locadoraRepository.findByCnpj(cnpj);
 			LocadoraEntity locadora = locadoraOptional.orElseThrow(() -> new NotFoundException());
-			LocadoraDto locadoraDto = converterParaDto(locadora);
+			LocadoraDto locadoraDto = convertDto(locadora);
 			return locadoraDto;
 		} catch (InvalidStateException ie) {
 			log.error(ie.getMessage());
@@ -55,15 +55,14 @@ public class LocadoraService {
 		}
 	}
 
-	// Salvando Locadora
-	public LocadoraDto salvandoLocadoraDto(LocadoraDto locadoraDtoSave) throws Exception {
+	public LocadoraDto save(LocadoraDto locadoraDto) {
 		LocadoraDto locadoraRetorno = null;
 		try {
-			log.info("Validando Cnpj: " + locadoraDtoSave.getCnpj());
-			LocadoraEntity locadora = modelMapper.map(locadoraDtoSave, LocadoraEntity.class);
+			log.info("Cadastrando locadora do Cnpj: " + locadoraDto.getCnpj());
+			LocadoraEntity locadora = modelMapper.map(locadoraDto, LocadoraEntity.class);
 			LocadoraEntity locadoraEntity = locadoraRepository.save(locadora);
 			locadoraRetorno = modelMapper.map(locadoraEntity, LocadoraDto.class);
-			log.info("Fornecedor Criado com Sucesso");
+			log.info("Locadora Cadastrada com Sucesso");
 		} catch (InvalidStateException ie) {
 			log.error(ie.getMessage());
 		} catch (Exception e) {
@@ -72,29 +71,30 @@ public class LocadoraService {
 		return locadoraRetorno;
 	}
 
-	// Atualizando Locadora
-	public LocadoraDto alterarLocadoraDto(LocadoraDto locadoraDto) {
+	public LocadoraDto update(LocadoraDto locadoraDto) {
 		try {
-			log.info("Atualizando Cliente : ");
-			LocadoraEntity locadora = locadoraRepository.save(converterParaEntity(locadoraDto));
-			LocadoraDto locadoraDtoSalvo = converterParaDto(locadora);
-			return locadoraDtoSalvo;
+			log.info("Atualizando Locadora : " + locadoraDto.getCnpj());
+			LocadoraEntity locadora = locadoraRepository.save(convertEntity(locadoraDto));
+			LocadoraDto locadoraDtoSave = convertDto(locadora);
+			log.info("Fornecedor atualizado com sucesso");
+			return locadoraDtoSave;
 		} catch (Exception ie) {
 			log.error(ie.getMessage());
 		}
 		return locadoraDto;
 	}
 
-	// Atualizando Locadora
-	public LocadoraDto atualiza(String cnpj, LocadoraDto locadoraDto) throws NotFoundException {
+	public LocadoraDto update(String cnpj, LocadoraDto locadoraDto) {
 		try {
+			log.info("Atualizando Locadora : " + locadoraDto.getCnpj());
 			LocadoraEntity locadora = locadoraRepository.findByCnpj(cnpj).get();
-			LocadoraDto locadoraDtoAntigo = converterParaDto(locadora);
-			BeanUtils.copyProperties(locadoraDto, locadoraDtoAntigo, "locadora");
-			LocadoraEntity convertEntity = converterParaEntity(locadoraDto);
+			LocadoraDto locadoraDtoOld = convertDto(locadora);
+			BeanUtils.copyProperties(locadoraDto, locadoraDtoOld, " locadora");
+			LocadoraEntity convertEntity = convertEntity(locadoraDto);
 			convertEntity.setId(locadora.getId());
-			LocadoraEntity locadoraAtualizado = locadoraRepository.save(convertEntity);
-			return converterParaDto(locadoraAtualizado);
+			LocadoraEntity locadoraUpdate = locadoraRepository.save(convertEntity);
+			log.info("Locadora atualizada com sucesso");
+			return convertDto(locadoraUpdate);
 		} catch (Exception ie) {
 			log.error(ie.getMessage());
 
@@ -102,22 +102,20 @@ public class LocadoraService {
 		return locadoraDto;
 	}
 
-	// Delete Locadora
 	public void delete(String cnpj) throws NotFoundException {
 		try {
-			log.info("Removendo Locadora : ");
+			log.info("Removendo Locadora : " + cnpj);
 			locadoraRepository.deleteByCnpj(cnpj);
 		} catch (Exception ie) {
 			log.error(ie.getMessage());
 		}
 	}
 
-	// Conversores
-	private LocadoraEntity converterParaEntity(LocadoraDto locadoraDto) {
+	private LocadoraEntity convertEntity(LocadoraDto locadoraDto) {
 		return modelMapper.map(locadoraDto, LocadoraEntity.class);
 	}
 
-	private LocadoraDto converterParaDto(LocadoraEntity locadora) {
+	private LocadoraDto convertDto(LocadoraEntity locadora) {
 		return modelMapper.map(locadora, LocadoraDto.class);
 	}
 

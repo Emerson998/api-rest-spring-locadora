@@ -31,33 +31,33 @@ public class FornecedorController {
 	@Autowired
 	private FornecedorService fornecedorService;
 
-	@ApiOperation(value = "Retorna Todos os Fornecedores")
+	@ApiOperation(value = "Busca Todos os Fornecedores")
 	@GetMapping
-	public Page<FornecedorDto> lista(Pageable pageable) {
+	public Page<FornecedorDto> page(Pageable pageable) {
 		try {
-			return fornecedorService.paginacaoDaApi(pageable);
+			return fornecedorService.page(pageable);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 		return null;
 	}
 
-	@ApiOperation(value = "Retorna Todos os Fornecedores Por Cnpj")
+	@ApiOperation(value = "Busca individual pelo Cnpj")
 	@GetMapping("/{cnpj}")
-	public ResponseEntity<FornecedorDto> listLogin(@PathVariable String cnpj) throws NotFoundException {
+	public ResponseEntity<FornecedorDto> search(@PathVariable String cnpj) {
 		try {
-			return ResponseEntity.ok(fornecedorService.buscaFornecedor(cnpj));
+			return ResponseEntity.ok(fornecedorService.search(cnpj));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return ResponseEntity.notFound().build();
 		}
 	}
 
-	@ApiOperation(value = "Salva os Fornecedores")
+	@ApiOperation(value = "Salva o Fornecedor")
 	@PostMapping
-	public ResponseEntity<FornecedorDto> salvaFornecedor(@RequestBody FornecedorDto fornecedorDto) {
+	public ResponseEntity<FornecedorDto> save(@RequestBody FornecedorDto fornecedorDto) {
 		try {
-			FornecedorDto resultado = fornecedorService.salvandoFornecedorDto(fornecedorDto);
+			FornecedorDto resultado = fornecedorService.save(fornecedorDto);
 			return ResponseEntity.status(HttpStatus.CREATED).body(resultado);
 		} catch (Exception ex) {
 			ex.getMessage();
@@ -69,10 +69,10 @@ public class FornecedorController {
 	@ApiOperation(value = "Atualiza Fornecedor")
 	@PutMapping("/{cnpj}")
 	@Transactional
-	public ResponseEntity<FornecedorDto> atualizaFornecedor(@PathVariable String cnpj,
-			@RequestBody FornecedorDto fornecedorDto) throws Exception {
+	public ResponseEntity<FornecedorDto> update(@PathVariable String cnpj, @RequestBody FornecedorDto fornecedorDto)
+			throws Exception {
 		try {
-			FornecedorDto fornecedorDtoAltera = fornecedorService.atualiza(cnpj, fornecedorDto);
+			FornecedorDto fornecedorDtoAltera = fornecedorService.update(cnpj, fornecedorDto);
 			return ResponseEntity.ok(fornecedorDtoAltera);
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -80,10 +80,10 @@ public class FornecedorController {
 		}
 	}
 
-	// Deletando usuario
+	@ApiOperation(value = "Remove o Fornecedor")
 	@DeleteMapping("/{cnpj}")
 	@Transactional
-	public ResponseEntity<FornecedorDto> deletando(@PathVariable String cnpj) throws NotFoundException {
+	public ResponseEntity<FornecedorDto> delete(@PathVariable String cnpj) {
 		try {
 			fornecedorService.delete(cnpj);
 			return ResponseEntity.ok().build();

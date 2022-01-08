@@ -3,7 +3,6 @@ package br.com.magna.api.masterlocadora.controller;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -27,15 +26,15 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("/locadora")
 
 public class LocadoraController {
-	// Locadora
+
 	@Autowired
 	private LocadoraService locadoraService;
 
 	@ApiOperation(value = "Retorna Todos os Fornecedores")
 	@GetMapping
-	public Page<LocadoraDto> lista(Pageable pageable) {
+	public Page<LocadoraDto> page(Pageable pageable) {
 		try {
-			return locadoraService.buscarTodos(pageable);
+			return locadoraService.page(pageable);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -44,20 +43,20 @@ public class LocadoraController {
 
 	@ApiOperation(value = "Retorna Todos os Fornecedores Por Cnpj")
 	@GetMapping("/{cnpj}")
-	public ResponseEntity<LocadoraDto> listaFornecedor(@PathVariable String cnpj) throws NotFoundException {
+	public ResponseEntity<LocadoraDto> search(@PathVariable String cnpj) {
 		try {
-			return ResponseEntity.ok(locadoraService.getLogin(cnpj));
+			return ResponseEntity.ok(locadoraService.search(cnpj));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return ResponseEntity.notFound().build();
-		} // Locadora locadora
+		}
 	}
 
 	@ApiOperation(value = "Salva os Locadora")
 	@PostMapping
-	public ResponseEntity<LocadoraDto> salvaLocadora(@RequestBody LocadoraDto locadoraDto) {
+	public ResponseEntity<LocadoraDto> save(@RequestBody LocadoraDto locadoraDto) {
 		try {
-			LocadoraDto resultado = locadoraService.salvandoLocadoraDto(locadoraDto);
+			LocadoraDto resultado = locadoraService.save(locadoraDto);
 			return ResponseEntity.status(HttpStatus.CREATED).body(resultado);
 		} catch (Exception ex) {
 			ex.getMessage();
@@ -69,11 +68,10 @@ public class LocadoraController {
 	@ApiOperation(value = "Altera Clientes")
 	@PutMapping("/{cnpj}")
 	@Transactional
-	public ResponseEntity<LocadoraDto> atualizaClientes(@PathVariable String cnpj, @RequestBody LocadoraDto locadoraDto)
-			throws Exception {
+	public ResponseEntity<LocadoraDto> update(@PathVariable String cnpj, @RequestBody LocadoraDto locadoraDto) {
 		try {
-			LocadoraDto locadoraDtoAltera = locadoraService.atualiza(cnpj, locadoraDto);
-			return ResponseEntity.ok(locadoraDtoAltera);
+			LocadoraDto locadoraDtoUpdate = locadoraService.update(cnpj, locadoraDto);
+			return ResponseEntity.ok(locadoraDtoUpdate);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return ResponseEntity.notFound().build();
@@ -83,16 +81,13 @@ public class LocadoraController {
 	@ApiOperation(value = "Deleta Clientes")
 	@DeleteMapping("/{cnpj}")
 	@Transactional
-	public ResponseEntity<LocadoraDto> deletando(@PathVariable String cnpj) throws NotFoundException {
+	public ResponseEntity<LocadoraDto> delete(@PathVariable String cnpj) {
 		try {
 			locadoraService.delete(cnpj);
 			return ResponseEntity.ok().build();
-		} catch (NotFoundException ex) {
-			ex.printStackTrace();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return ResponseEntity.notFound().build();
 		}
-		return null;
 	}
 }

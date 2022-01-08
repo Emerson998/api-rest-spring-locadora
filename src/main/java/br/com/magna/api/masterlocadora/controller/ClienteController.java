@@ -25,39 +25,38 @@ import io.swagger.annotations.ApiOperation;
 @Api
 @RestController
 @RequestMapping("/cliente")
-
 public class ClienteController {
 
 	@Autowired
 	private ClienteService clienteService;
 
-	@ApiOperation(value = "Retorna Todos os Clientes")
+	@ApiOperation(value = "Busca Todos os Clientes")
 	@GetMapping
-	public Page<ClienteDto> lista(Pageable pageable) {
+	public Page<ClienteDto> page(Pageable pageable) {
 		try {
-			return clienteService.paginacaoDaApi(pageable);
+			return clienteService.page(pageable);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		return null;
+		return page(pageable);
 	}
 
-	@ApiOperation(value = "Retorna Todos os Clientes Por Cpf")
+	@ApiOperation(value = "Busca individual pelo Cpf")
 	@GetMapping("/{cpf}")
-	public ResponseEntity<ClienteDto> listarCliente(@PathVariable String cpf) throws NotFoundException {
+	public ResponseEntity<ClienteDto> search(@PathVariable String cpf) {
 		try {
-			return ResponseEntity.ok(clienteService.buscaCliente(cpf));
+			return ResponseEntity.ok(clienteService.search(cpf));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return ResponseEntity.notFound().build();
 		}
 	}
 
-	@ApiOperation(value = "Salva os Clientes")
+	@ApiOperation(value = "Cadastra o  Cliente")
 	@PostMapping
-	public ResponseEntity<ClienteDto> salvarCliente(@RequestBody ClienteDto clienteDto) {
+	public ResponseEntity<ClienteDto> save(@RequestBody ClienteDto clienteDto) {
 		try {
-			ClienteDto resultado = clienteService.salvandoClienteDto(clienteDto);
+			ClienteDto resultado = clienteService.save(clienteDto);
 			return ResponseEntity.status(HttpStatus.CREATED).body(resultado);
 		} catch (Exception ex) {
 			ex.getMessage();
@@ -66,25 +65,24 @@ public class ClienteController {
 
 	}
 
-	@ApiOperation(value = "Atualiza os Clientes")
+	@ApiOperation(value = "Atualiza o Cliente")
 	@PutMapping("/{cpf}")
 	@Transactional
-	public ResponseEntity<ClienteDto> atualizarClientes(@PathVariable String cpf, @RequestBody ClienteDto clienteDto)
+	public ResponseEntity<ClienteDto> update(@PathVariable String cpf, @RequestBody ClienteDto clienteDto)
 			throws Exception {
 		try {
-			ClienteDto clienteDtoAltera = clienteService.atualiza(cpf, clienteDto);
+			ClienteDto clienteDtoAltera = clienteService.update(cpf, clienteDto);
 			return ResponseEntity.ok(clienteDtoAltera);
-		} catch (NotFoundException ex) {
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			return ResponseEntity.notFound().build();
 		}
-		return null;
 	}
 
-	// Deletando usuario
+	@ApiOperation(value = "Remove o Cliente")
 	@DeleteMapping("/{cpf}")
 	@Transactional
-	public ResponseEntity<ClienteDto> deletando(@PathVariable String cpf) throws NotFoundException {
+	public ResponseEntity<ClienteDto> delete(@PathVariable String cpf) {
 		try {
 			clienteService.delete(cpf);
 			return ResponseEntity.ok().build();

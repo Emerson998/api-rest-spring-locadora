@@ -1,31 +1,32 @@
 package br.com.magna.api.masterlocadora.dto;
 
+import java.time.LocalDate;
 import java.util.Objects;
 
-import br.com.magna.api.masterlocadora.entity.ClienteEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import br.com.magna.api.masterlocadora.entity.LocadoraEntity;
 
 public class ClienteDto {
 
 	private String nome;
 	private String cpf;
+	private Long senha;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+	private LocalDate data = LocalDate.now();
+
 	private LocadoraEntity locadora;
 
 	public ClienteDto() {
 
 	}
 
-	public LocadoraEntity getLocadora() {
-		return locadora;
-	}
-
-	public void setLocadora(LocadoraEntity locadora) {
+	public ClienteDto(String nome, String cpf, Long senha, LocalDate data, LocadoraEntity locadora) {
+		this.nome = nome;
+		this.cpf = cpf;
+		this.senha = senha;
+		this.data = data;
 		this.locadora = locadora;
-	}
-
-	public ClienteDto(ClienteEntity cliente) {
-		this.nome = cliente.getNome();
-		this.cpf = cliente.getCpf();
 	}
 
 	public String getNome() {
@@ -44,14 +45,31 @@ public class ClienteDto {
 		this.cpf = cpf;
 	}
 
+	public Long getSenha() {
+		return senha;
+	}
+
+	public void setSenha(Long senha) {
+		this.senha = senha;
+	}
+
+	public LocalDate getData() {
+		return data;
+	}
+
+	public void setData(LocalDate data) {
+		this.data = data;
+	}
+
 	@Override
 	public String toString() {
-		return "ClienteDto [nome=" + nome + ", cpf=" + cpf + ", locadora=" + locadora + "]";
+		return "ClienteDto [nome=" + nome + ", cpf=" + cpf + ", senha=" + senha + ", data=" + data + ", locadora="
+				+ locadora + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(cpf, locadora, nome);
+		return Objects.hash(cpf, data, locadora, nome, senha);
 	}
 
 	@Override
@@ -63,8 +81,9 @@ public class ClienteDto {
 		if (getClass() != obj.getClass())
 			return false;
 		ClienteDto other = (ClienteDto) obj;
-		return Objects.equals(cpf, other.cpf) && Objects.equals(locadora, other.locadora)
-				&& Objects.equals(nome, other.nome);
+		return Objects.equals(cpf, other.cpf) && Objects.equals(data, other.data)
+				&& Objects.equals(locadora, other.locadora) && Objects.equals(nome, other.nome)
+				&& Objects.equals(senha, other.senha);
 	}
 
 }

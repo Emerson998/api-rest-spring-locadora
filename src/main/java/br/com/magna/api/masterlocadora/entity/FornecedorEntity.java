@@ -1,6 +1,7 @@
 package br.com.magna.api.masterlocadora.entity;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Objects;
 
 import javax.persistence.Entity;
@@ -9,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
 @Table(name = "fornecedor")
@@ -19,10 +22,13 @@ public class FornecedorEntity implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	private String nome;
 	private String endereco;
 	private String lote;
-	private String quantidadeDeDvds;
-	private String cnpj;;
+	private Long quantidadeDeDvds;
+	private String cnpj;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+	private LocalDate data = LocalDate.now();
 
 	@OneToOne
 	private LocadoraEntity locadora;
@@ -55,11 +61,11 @@ public class FornecedorEntity implements Serializable {
 		this.lote = lote;
 	}
 
-	public String getQuantidadeDeDvds() {
+	public Long getQuantidadeDeDvds() {
 		return quantidadeDeDvds;
 	}
 
-	public void setQuantidadeDeDvds(String quantidadeDeDvds) {
+	public void setQuantidadeDeDvds(Long quantidadeDeDvds) {
 		this.quantidadeDeDvds = quantidadeDeDvds;
 	}
 
@@ -79,15 +85,32 @@ public class FornecedorEntity implements Serializable {
 		this.locadora = locadora;
 	}
 
+	public LocalDate getData() {
+		return data;
+	}
+
+	public void setData(LocalDate data) {
+		this.data = data;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
 	@Override
 	public String toString() {
-		return "FornecedorEntity [id=" + id + ", endereco=" + endereco + ", lote=" + lote + ", quantidadeDeDvds="
-				+ quantidadeDeDvds + ", cnpj=" + cnpj + ", locadora=" + locadora + "]";
+		return "FornecedorEntity [id=" + id + ", nome=" + nome + ", endereco=" + endereco + ", lote=" + lote
+				+ ", quantidadeDeDvds=" + quantidadeDeDvds + ", cnpj=" + cnpj + ", data=" + data + ", locadora="
+				+ locadora + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(cnpj, endereco, id, locadora, lote, quantidadeDeDvds);
+		return Objects.hash(cnpj, data, endereco, id, locadora, lote, nome, quantidadeDeDvds);
 	}
 
 	@Override
@@ -99,9 +122,10 @@ public class FornecedorEntity implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		FornecedorEntity other = (FornecedorEntity) obj;
-		return Objects.equals(cnpj, other.cnpj) && Objects.equals(endereco, other.endereco)
-				&& Objects.equals(id, other.id) && Objects.equals(locadora, other.locadora)
-				&& Objects.equals(lote, other.lote) && Objects.equals(quantidadeDeDvds, other.quantidadeDeDvds);
+		return Objects.equals(cnpj, other.cnpj) && Objects.equals(data, other.data)
+				&& Objects.equals(endereco, other.endereco) && Objects.equals(id, other.id)
+				&& Objects.equals(locadora, other.locadora) && Objects.equals(lote, other.lote)
+				&& Objects.equals(nome, other.nome) && Objects.equals(quantidadeDeDvds, other.quantidadeDeDvds);
 	}
 
 }

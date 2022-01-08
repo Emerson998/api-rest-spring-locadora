@@ -29,74 +29,73 @@ public class ClienteService {
 
 	Logger log = LoggerFactory.getLogger(ClienteService.class);
 
-	// Paginacao
-	public Page<ClienteDto> paginacaoDaApi(Pageable pageable) {
+	public Page<ClienteDto> page(Pageable pageable) {
 		try {
+			log.info("Busca Todos os Clientes");
 			Page<ClienteEntity> cliente = clienteRepository.findAll(pageable);
 			return cliente.map(item -> modelMapper.map(item, ClienteDto.class));
 		} catch (Exception ex) {
-			throw ex;
+			log.error(ex.getMessage());
 		}
+		return null;
 	}
 
-	// Buscando Clientes
-	public ClienteDto buscaCliente(String cpf) throws NotFoundException {
+	public ClienteDto search(String cpf) {
 		try {
-			log.info("Validando CPF : ");
+			log.info("Busca individual pelo Cpf : " + cpf);
 			Optional<ClienteEntity> clienteOptional = clienteRepository.findByCpf(cpf);
 			ClienteEntity cliente = clienteOptional.orElseThrow(() -> new NotFoundException());
-			ClienteDto usuarioDto = converterParaDto(cliente);
-			return usuarioDto;
+			ClienteDto clienteDto = converter(cliente);
+			return clienteDto;
 		} catch (InvalidStateException ie) {
 			log.error(ie.getMessage());
-			return null;
 		} catch (Exception ie) {
 			log.error(ie.getMessage());
-			return null;
 		}
+		return null;
 	}
 
-	// Salvando Clientes
-	public ClienteDto salvandoClienteDto(ClienteDto clienteDtoSave) throws Exception {
+	public ClienteDto save(ClienteDto clienteDto) throws Exception {
 		ClienteDto clienteRetorno = null;
 		try {
-			log.info("Validando CPF: " + clienteDtoSave.getCpf());
-			validandoCpf(clienteDtoSave.getCpf());
-			ClienteEntity cliente = modelMapper.map(clienteDtoSave, ClienteEntity.class);
+			log.info("Cadastrando e validando CPF: " + clienteDto.getCpf());
+			validatingCpf(clienteDto.getCpf());
+			ClienteEntity cliente = modelMapper.map(clienteDto, ClienteEntity.class);
 			ClienteEntity clienteEntity = clienteRepository.save(cliente);
 			clienteRetorno = modelMapper.map(clienteEntity, ClienteDto.class);
-			log.info("Cliente Criado com Sucesso");
+			log.info("Cliente cadastrado com Sucesso");
 		} catch (InvalidStateException ie) {
 			log.error(ie.getMessage());
 		} catch (Exception e) {
-			throw e;
+			log.error(e.getMessage());
 		}
 		return clienteRetorno;
 	}
 
-	// Atualizando Clientes
-	public ClienteDto alterarClienteDto(ClienteDto clienteDto) {
+	public ClienteDto update(ClienteDto clienteDto) {
 		try {
-			log.info("Atualizando Cliente : ");
-			ClienteEntity cliente = clienteRepository.save(converterParaEntity(clienteDto));
-			ClienteDto clienteDtoSalvo = converterParaDto(cliente);
-			return clienteDtoSalvo;
+			log.info("Atualizando Cliente : " + clienteDto.getCpf());
+			ClienteEntity cliente = clienteRepository.save(convertEntity(clienteDto));
+			ClienteDto clienteDtoSave = converter(cliente);
+			log.info("Cliente atualizado com Sucesso" + clienteDto.getCpf());
+			return clienteDtoSave;
 		} catch (Exception ie) {
 			log.error(ie.getMessage());
 		}
 		return clienteDto;
 	}
 
-	// Atualizando Clientes
-	public ClienteDto atualiza(String cpf, ClienteDto clienteDto) throws NotFoundException {
+	public ClienteDto update(String cpf, ClienteDto clienteDto) {
 		try {
+			log.info("Atualizando Cliente : " + clienteDto.getCpf());
 			ClienteEntity cliente = clienteRepository.findByCpf(cpf).get();
-			ClienteDto clienteDtoAntigo = converterParaDto(cliente);
-			BeanUtils.copyProperties(clienteDto, clienteDtoAntigo, "cliente");
-			ClienteEntity convertEntity = converterParaEntity(clienteDto);
+			ClienteDto customerDtoOld = converter(cliente);
+			BeanUtils.copyProperties(clienteDto, customerDtoOld, "cliente");
+			ClienteEntity convertEntity = convertEntity(clienteDto);
 			convertEntity.setId(cliente.getId());
-			ClienteEntity clienteAtualizado = clienteRepository.save(convertEntity);
-			return converterParaDto(clienteAtualizado);
+			ClienteEntity clienteUpdate = clienteRepository.save(convertEntity);
+			log.info("Cliente atualizado com Sucesso");
+			return converter(clienteUpdate);
 		} catch (Exception ie) {
 			log.error(ie.getMessage());
 
@@ -104,28 +103,33 @@ public class ClienteService {
 		return clienteDto;
 	}
 
-	// Apenas Cpfs Validos
-	public void validandoCpf(String cpf) {
-		CPFValidator cpfValidator = new CPFValidator();
-		cpfValidator.assertValid(cpf);
+	public boolean validatingCpf(String cpf) {
+		try {
+			CPFValidator cpfValidator = new CPFValidator();
+			cpfValidator.assertValid(cpf);
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			return true;
+		}
+		return false;
+
 	}
 
-	// Delete Um Cliente
 	public void delete(String cpf) throws NotFoundException {
 		try {
-			log.info("Removendo Cliente : ");
+			log.info("Removendo Cliente : " + cpf);
 			clienteRepository.deleteByCpf(cpf);
+			log.info("Remocao concluida com sucesso ");
 		} catch (Exception ie) {
 			log.error(ie.getMessage());
 		}
 	}
 
-	// Conversores
-	private ClienteEntity converterParaEntity(ClienteDto clienteDto) {
+	private ClienteEntity convertEntity(ClienteDto clienteDto) {
 		return modelMapper.map(clienteDto, ClienteEntity.class);
 	}
 
-	private ClienteDto converterParaDto(ClienteEntity cliente) {
+	private ClienteDto converter(ClienteEntity cliente) {
 		return modelMapper.map(cliente, ClienteDto.class);
 	}
 
