@@ -3,6 +3,8 @@ package br.com.magna.api.masterlocadora.controller;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -30,8 +32,9 @@ public class LocadoraController {
 	@Autowired
 	private LocadoraService locadoraService;
 
-	@ApiOperation(value = "Retorna Todos os Fornecedores")
+	@ApiOperation(value = "Retorna Todos as Locadoras")
 	@GetMapping
+	@Cacheable(value = "listaDeLocadoras")
 	public Page<LocadoraDto> page(Pageable pageable) {
 		try {
 			return locadoraService.page(pageable);
@@ -41,8 +44,9 @@ public class LocadoraController {
 		return null;
 	}
 
-	@ApiOperation(value = "Retorna Todos os Fornecedores Por Cnpj")
+	@ApiOperation(value = "Retorna Todos os Locadoras Por Cnpj")
 	@GetMapping("/{cnpj}")
+	@CacheEvict(value = "listaDeLocadoras", allEntries = true)
 	public ResponseEntity<LocadoraDto> search(@PathVariable String cnpj) {
 		try {
 			return ResponseEntity.ok(locadoraService.search(cnpj));
@@ -52,8 +56,9 @@ public class LocadoraController {
 		}
 	}
 
-	@ApiOperation(value = "Salva os Locadora")
+	@ApiOperation(value = "Salva as Locadoras")
 	@PostMapping
+	@CacheEvict(value = "listaDeLocadoras", allEntries = true)
 	public ResponseEntity<LocadoraDto> save(@RequestBody LocadoraDto locadoraDto) {
 		try {
 			LocadoraDto resultado = locadoraService.save(locadoraDto);
@@ -65,9 +70,10 @@ public class LocadoraController {
 
 	}
 
-	@ApiOperation(value = "Altera Clientes")
+	@ApiOperation(value = "Altera Locadoras")
 	@PutMapping("/{cnpj}")
 	@Transactional
+	@CacheEvict(value = "listaDeLocadoras", allEntries = true)
 	public ResponseEntity<LocadoraDto> update(@PathVariable String cnpj, @RequestBody LocadoraDto locadoraDto) {
 		try {
 			LocadoraDto locadoraDtoUpdate = locadoraService.update(cnpj, locadoraDto);
@@ -78,9 +84,10 @@ public class LocadoraController {
 		}
 	}
 
-	@ApiOperation(value = "Deleta Clientes")
+	@ApiOperation(value = "Deleta Locadoras")
 	@DeleteMapping("/{cnpj}")
 	@Transactional
+	@CacheEvict(value = "listaDeLocadoras", allEntries = true)
 	public ResponseEntity<LocadoraDto> delete(@PathVariable String cnpj) {
 		try {
 			locadoraService.delete(cnpj);

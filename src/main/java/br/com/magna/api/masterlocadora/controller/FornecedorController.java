@@ -3,6 +3,8 @@ package br.com.magna.api.masterlocadora.controller;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +35,7 @@ public class FornecedorController {
 
 	@ApiOperation(value = "Busca Todos os Fornecedores")
 	@GetMapping
+	@Cacheable(value = "listaDeFornecedores")
 	public Page<FornecedorDto> page(Pageable pageable) {
 		try {
 			return fornecedorService.page(pageable);
@@ -44,6 +47,7 @@ public class FornecedorController {
 
 	@ApiOperation(value = "Busca individual pelo Cnpj")
 	@GetMapping("/{cnpj}")
+	@CacheEvict(value = "listaDeFornecedores", allEntries = true)
 	public ResponseEntity<FornecedorDto> search(@PathVariable String cnpj) {
 		try {
 			return ResponseEntity.ok(fornecedorService.search(cnpj));
@@ -55,6 +59,7 @@ public class FornecedorController {
 
 	@ApiOperation(value = "Salva o Fornecedor")
 	@PostMapping
+	@CacheEvict(value = "listaDeFornecedores", allEntries = true)
 	public ResponseEntity<FornecedorDto> save(@RequestBody FornecedorDto fornecedorDto) {
 		try {
 			FornecedorDto resultado = fornecedorService.save(fornecedorDto);
@@ -69,6 +74,7 @@ public class FornecedorController {
 	@ApiOperation(value = "Atualiza Fornecedor")
 	@PutMapping("/{cnpj}")
 	@Transactional
+	@CacheEvict(value = "listaDeFornecedores", allEntries = true)
 	public ResponseEntity<FornecedorDto> update(@PathVariable String cnpj, @RequestBody FornecedorDto fornecedorDto)
 			throws Exception {
 		try {
@@ -83,6 +89,7 @@ public class FornecedorController {
 	@ApiOperation(value = "Remove o Fornecedor")
 	@DeleteMapping("/{cnpj}")
 	@Transactional
+	@CacheEvict(value = "listaDeFornecedores", allEntries = true)
 	public ResponseEntity<FornecedorDto> delete(@PathVariable String cnpj) {
 		try {
 			fornecedorService.delete(cnpj);

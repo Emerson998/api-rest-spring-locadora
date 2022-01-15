@@ -10,7 +10,7 @@ import br.com.magna.api.masterlocadora.entity.LocadoraEntity;
 public class ClienteDto {
 
 	private String nome;
-	private String cpf;
+	private String cpf;	
 	private Long senha;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
 	private LocalDate data = LocalDate.now();
@@ -27,6 +27,7 @@ public class ClienteDto {
 		this.senha = senha;
 		this.data = data;
 		this.locadora = locadora;
+
 	}
 
 	public String getNome() {

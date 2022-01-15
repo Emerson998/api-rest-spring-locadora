@@ -30,7 +30,7 @@ public class LocadoraService {
 
 	public Page<LocadoraDto> page(Pageable pageable) {
 		try {
-			log.info("Busca Todos os Fornecedores");
+			log.info("Busca Todas as Locadoras");
 			Page<LocadoraEntity> locadora = locadoraRepository.findAll(pageable);
 			return locadora.map(item -> modelMapper.map(item, LocadoraDto.class));
 		} catch (Exception ex) {
@@ -76,7 +76,7 @@ public class LocadoraService {
 			log.info("Atualizando Locadora : " + locadoraDto.getCnpj());
 			LocadoraEntity locadora = locadoraRepository.save(convertEntity(locadoraDto));
 			LocadoraDto locadoraDtoSave = convertDto(locadora);
-			log.info("Fornecedor atualizado com sucesso");
+			log.info("Locadora atualizada com sucesso");
 			return locadoraDtoSave;
 		} catch (Exception ie) {
 			log.error(ie.getMessage());
@@ -106,6 +106,7 @@ public class LocadoraService {
 		try {
 			log.info("Removendo Locadora : " + cnpj);
 			locadoraRepository.deleteByCnpj(cnpj);
+			log.info("Remocao concluida com sucesso");
 		} catch (Exception ie) {
 			log.error(ie.getMessage());
 		}

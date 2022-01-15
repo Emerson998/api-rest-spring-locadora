@@ -106,6 +106,7 @@ public class FornecedorService {
 		try {
 			log.info("Removendo Fornecedor : " + cnpj);
 			fornecedorRepository.deleteByCnpj(cnpj);
+			log.info("Remocao concluida com sucesso ");
 		} catch (Exception ie) {
 			log.error(ie.getMessage());
 		}

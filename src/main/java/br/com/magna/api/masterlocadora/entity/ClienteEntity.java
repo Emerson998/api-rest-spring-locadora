@@ -8,7 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -28,20 +28,11 @@ public class ClienteEntity implements Serializable {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
 	private LocalDate data = LocalDate.now();
 
-	@OneToOne
+	@ManyToOne
 	private LocadoraEntity locadora;
-
+	
 	public ClienteEntity() {
 
-	}
-
-	public ClienteEntity(Long id, String nome, String cpf, Long senha, LocalDate data, LocadoraEntity locadora) {
-		this.id = id;
-		this.nome = nome;
-		this.cpf = cpf;
-		this.senha = senha;
-		this.data = data;
-		this.locadora = locadora;
 	}
 
 	public Long getId() {
@@ -87,12 +78,12 @@ public class ClienteEntity implements Serializable {
 	@Override
 	public String toString() {
 		return "ClienteEntity [id=" + id + ", nome=" + nome + ", cpf=" + cpf + ", senha=" + senha + ", data=" + data
-				+ ", locadora=" + locadora + "]";
+				+ "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(cpf, data, id, locadora, nome, senha);
+		return Objects.hash(cpf, data, id, nome, senha);
 	}
 
 	@Override
@@ -105,8 +96,7 @@ public class ClienteEntity implements Serializable {
 			return false;
 		ClienteEntity other = (ClienteEntity) obj;
 		return Objects.equals(cpf, other.cpf) && Objects.equals(data, other.data) && Objects.equals(id, other.id)
-				&& Objects.equals(locadora, other.locadora) && Objects.equals(nome, other.nome)
-				&& Objects.equals(senha, other.senha);
+				&& Objects.equals(nome, other.nome) && Objects.equals(senha, other.senha);
 	}
 
 }

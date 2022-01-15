@@ -86,7 +86,7 @@ public class ClienteController {
 		try {
 			clienteService.delete(cpf);
 			return ResponseEntity.ok().build();
-		} catch (NotFoundException ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 			return ResponseEntity.notFound().build();
 		}

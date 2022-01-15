@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,6 +15,7 @@ import br.com.caelum.stella.validation.CPFValidator;
 import br.com.caelum.stella.validation.InvalidStateException;
 import br.com.magna.api.masterlocadora.dto.ClienteDto;
 import br.com.magna.api.masterlocadora.entity.ClienteEntity;
+import br.com.magna.api.masterlocadora.exception.ServiceExceptionLocadora;
 import br.com.magna.api.masterlocadora.repository.ClienteRepository;
 
 @Service
@@ -30,21 +30,16 @@ public class ClienteService {
 	Logger log = LoggerFactory.getLogger(ClienteService.class);
 
 	public Page<ClienteDto> page(Pageable pageable) {
-		try {
-			log.info("Busca Todos os Clientes");
-			Page<ClienteEntity> cliente = clienteRepository.findAll(pageable);
-			return cliente.map(item -> modelMapper.map(item, ClienteDto.class));
-		} catch (Exception ex) {
-			log.error(ex.getMessage());
-		}
-		return null;
+		log.info("Busca Todos os Clientes");
+		Page<ClienteEntity> cliente = clienteRepository.findAll(pageable);
+		return cliente.map(item -> modelMapper.map(item, ClienteDto.class));
 	}
 
 	public ClienteDto search(String cpf) {
 		try {
 			log.info("Busca individual pelo Cpf : " + cpf);
 			Optional<ClienteEntity> clienteOptional = clienteRepository.findByCpf(cpf);
-			ClienteEntity cliente = clienteOptional.orElseThrow(() -> new NotFoundException());
+			ClienteEntity cliente = clienteOptional.orElseThrow(() -> new ServiceExceptionLocadora("Erro na busca por este cliente, verifique o cpf e tente novamente"));
 			ClienteDto clienteDto = converter(cliente);
 			return clienteDto;
 		} catch (InvalidStateException ie) {
@@ -55,7 +50,7 @@ public class ClienteService {
 		return null;
 	}
 
-	public ClienteDto save(ClienteDto clienteDto) throws Exception {
+	public ClienteDto save(ClienteDto clienteDto) {
 		ClienteDto clienteRetorno = null;
 		try {
 			log.info("Cadastrando e validando CPF: " + clienteDto.getCpf());
@@ -65,9 +60,7 @@ public class ClienteService {
 			clienteRetorno = modelMapper.map(clienteEntity, ClienteDto.class);
 			log.info("Cliente cadastrado com Sucesso");
 		} catch (InvalidStateException ie) {
-			log.error(ie.getMessage());
-		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("Erro" + ie);
 		}
 		return clienteRetorno;
 	}
@@ -115,7 +108,7 @@ public class ClienteService {
 
 	}
 
-	public void delete(String cpf) throws NotFoundException {
+	public void delete(String cpf){
 		try {
 			log.info("Removendo Cliente : " + cpf);
 			clienteRepository.deleteByCpf(cpf);
