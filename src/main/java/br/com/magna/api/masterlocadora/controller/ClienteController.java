@@ -1,9 +1,9 @@
 package br.com.magna.api.masterlocadora.controller;
 
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -32,13 +32,13 @@ public class ClienteController {
 
 	@ApiOperation(value = "Busca Todos os Clientes")
 	@GetMapping
-	public Page<ClienteDto> page(Pageable pageable) {
+	public Page<ClienteDto> searchAll(Pageable pageable) {
 		try {
-			return clienteService.page(pageable);
+			return clienteService.searchAll(pageable);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		return page(pageable);
+		return searchAll(pageable);
 	}
 
 	@ApiOperation(value = "Busca individual pelo Cpf")
@@ -47,14 +47,13 @@ public class ClienteController {
 		try {
 			return ResponseEntity.ok(clienteService.search(cpf));
 		} catch (Exception ex) {
-			ex.printStackTrace();
 			return ResponseEntity.notFound().build();
 		}
 	}
 
 	@ApiOperation(value = "Cadastra o  Cliente")
 	@PostMapping
-	public ResponseEntity<ClienteDto> save(@RequestBody ClienteDto clienteDto) {
+	public ResponseEntity<ClienteDto> save(@Valid @RequestBody ClienteDto clienteDto) {
 		try {
 			ClienteDto resultado = clienteService.save(clienteDto);
 			return ResponseEntity.status(HttpStatus.CREATED).body(resultado);
@@ -68,13 +67,12 @@ public class ClienteController {
 	@ApiOperation(value = "Atualiza o Cliente")
 	@PutMapping("/{cpf}")
 	@Transactional
-	public ResponseEntity<ClienteDto> update(@PathVariable String cpf, @RequestBody ClienteDto clienteDto)
+	public ResponseEntity<ClienteDto> update(@Valid @PathVariable String cpf, @RequestBody ClienteDto clienteDto)
 			throws Exception {
 		try {
 			ClienteDto clienteDtoAltera = clienteService.update(cpf, clienteDto);
 			return ResponseEntity.ok(clienteDtoAltera);
 		} catch (Exception ex) {
-			ex.printStackTrace();
 			return ResponseEntity.notFound().build();
 		}
 	}
@@ -87,7 +85,6 @@ public class ClienteController {
 			clienteService.delete(cpf);
 			return ResponseEntity.ok().build();
 		} catch (Exception ex) {
-			ex.printStackTrace();
 			return ResponseEntity.notFound().build();
 		}
 	}

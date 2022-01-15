@@ -10,6 +10,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.br.CPF;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -22,15 +26,21 @@ public class ClienteEntity implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	@NotBlank
 	private String nome;
+	@NotBlank
+	@CPF
+	@Size(max = 11)
 	private String cpf;
+	@NotBlank
+	@Size(max = 12)
 	private Long senha;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
 	private LocalDate data = LocalDate.now();
 
 	@ManyToOne
 	private LocadoraEntity locadora;
-	
+
 	public ClienteEntity() {
 
 	}

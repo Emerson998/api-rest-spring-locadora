@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.caelum.stella.validation.CPFValidator;
 import br.com.caelum.stella.validation.InvalidStateException;
@@ -29,7 +30,7 @@ public class ClienteService {
 
 	Logger log = LoggerFactory.getLogger(ClienteService.class);
 
-	public Page<ClienteDto> page(Pageable pageable) {
+	public Page<ClienteDto> searchAll(Pageable pageable) {
 		log.info("Busca Todos os Clientes");
 		Page<ClienteEntity> cliente = clienteRepository.findAll(pageable);
 		return cliente.map(item -> modelMapper.map(item, ClienteDto.class));
@@ -39,7 +40,8 @@ public class ClienteService {
 		try {
 			log.info("Busca individual pelo Cpf : " + cpf);
 			Optional<ClienteEntity> clienteOptional = clienteRepository.findByCpf(cpf);
-			ClienteEntity cliente = clienteOptional.orElseThrow(() -> new ServiceExceptionLocadora("Erro na busca por este cliente, verifique o cpf e tente novamente"));
+			ClienteEntity cliente = clienteOptional.orElseThrow(() -> new ServiceExceptionLocadora(
+					"Erro na busca por este cliente, verifique o cpf e tente novamente"));
 			ClienteDto clienteDto = converter(cliente);
 			return clienteDto;
 		} catch (InvalidStateException ie) {
@@ -50,6 +52,7 @@ public class ClienteService {
 		return null;
 	}
 
+	@Transactional
 	public ClienteDto save(ClienteDto clienteDto) {
 		ClienteDto clienteRetorno = null;
 		try {
@@ -61,10 +64,13 @@ public class ClienteService {
 			log.info("Cliente cadastrado com Sucesso");
 		} catch (InvalidStateException ie) {
 			log.error("Erro" + ie);
+		} catch (Exception ex) {
+			ex.getMessage();
 		}
 		return clienteRetorno;
 	}
 
+	@Transactional
 	public ClienteDto update(ClienteDto clienteDto) {
 		try {
 			log.info("Atualizando Cliente : " + clienteDto.getCpf());
@@ -78,6 +84,7 @@ public class ClienteService {
 		return clienteDto;
 	}
 
+	@Transactional
 	public ClienteDto update(String cpf, ClienteDto clienteDto) {
 		try {
 			log.info("Atualizando Cliente : " + clienteDto.getCpf());
@@ -100,7 +107,7 @@ public class ClienteService {
 		try {
 			CPFValidator cpfValidator = new CPFValidator();
 			cpfValidator.assertValid(cpf);
-		} catch (Exception e) {
+		} catch (InvalidStateException e) {
 			log.error(e.getMessage());
 			return true;
 		}
@@ -108,11 +115,11 @@ public class ClienteService {
 
 	}
 
-	public void delete(String cpf){
+	@Transactional
+	public void delete(String cpf) {
 		try {
 			log.info("Removendo Cliente : " + cpf);
 			clienteRepository.deleteByCpf(cpf);
-			log.info("Remocao concluida com sucesso ");
 		} catch (Exception ie) {
 			log.error(ie.getMessage());
 		}
